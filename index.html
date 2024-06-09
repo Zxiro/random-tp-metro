@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <title>台北捷運站點隨機輪盤</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="wheel" width="500" height="500"></canvas>
+  <button id="spin">開始轉動</button>
+
+  <script>
+    const stations = ["台北車站", "象山", "東門", "中正紀念堂", "中山", "善導寺", "忠孝復興",
+        "忠孝新生", "南京復興"
+    ]; // 所有站點列表
+    const numSlices = stations.length; // 輪盤區塊數量
+    const wheelRadius = 200; // 輪盤半徑
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const spinBtn = document.getElementById("spin");
+    let isSpinning = false;
+    let angleOffset = 0;
+    let lastUpdateTime = null;
+
+    function drawWheel() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
+
+      // 繪製輪盤本身
+      ctx.beginPath();
+      ctx.arc(canvas.width / 2, canvas.height / 2, wheelRadius, 0, 2 * Math.PI);
+      ctx.stroke();
+
+      // 繪製輪盤區塊和站點名稱
+      const sliceAngle = 2 * Math.PI / numSlices;
+      for (let i = 0; i < numSlices; i++) {
+        const startAngle = i * sliceAngle;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, canvas.height / 2);
+        ctx.arc(
+          canvas.width / 2,
+          canvas.height / 2,
+          wheelRadius,
+          startAngle,
+          startAngle + sliceAngle,
+          false
+        );
+        ctx.lineTo(canvas.width / 2, canvas.height / 2);
+        ctx.closePath();
+        ctx.stroke();
+
+        const textAngle = startAngle + sliceAngle / 2 - Math.PI / 2;
+        const textX = canvas.width / 2 + Math.cos(textAngle) * wheelRadius * 0.6;
+        const textY = canvas.height / 2 + Math.sin(textAngle) * wheelRadius * 0.6;
+        ctx.fillText(stations[i], textX, textY);
+      }
+    }
+
+    function spin() {
+      if (!isSpinning) {
+        isSpinning = true;
+        angleOffset = Math.random() * 10 + 10; // 隨機初始角度偏移
+        lastUpdateTime = null;
+        requestAnimationFrame(spinUpdate);
+      }
+    }
+
+    function spinUpdate(time) {
+      if (!lastUpdateTime) {
+        lastUpdateTime = time;
+      }
+      const deltaTime = time - lastUpdateTime;
+      lastUpdateTime = time;
+
+      angleOffset -= deltaTime * 0.001; // 角度偏移隨時間遞減
+
+      drawWheel();
+
+      if (angleOffset > 0) {
+        requestAnimationFrame(spinUpdate);
+      } else {
+        isSpinning = false;
+        const selectedSlice = Math.floor((2 * Math.PI - angleOffset) / (2 * Math.PI / numSlices)) % numSlices;
+        alert(`隨機選取的站點是: ${stations[selectedSlice]}`);
+      }
+    }
+
+    drawWheel();
+    spinBtn.addEventListener("click", spin);
+  </script>
+</body>
+</html>
