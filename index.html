@@ -1,131 +1,170 @@
 <!DOCTYPE html>
-<html lang="zh-tw">
-    <head>
-    <title> Random Taipei Metro Station - 隨機台北捷運站點 </title>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隨機捷運站咖啡廳</title>
     <style>
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: Arial, sans-serif;
-          background-color: #f0f0f0;
+        body, html {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
         }
-    
-        #banner {
-          background-color: #333;
-          color: #fff;
-          padding: 10px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          height: 10vh; /* 佔視窗高度的 15% */
+        .banner {
+            height: 8%;
+            background-color: #D2B48C;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
         }
-    
-        #wheel-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 90vh; /* 剩餘的 85% 高度 */
+        .banner-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4A3C31;
         }
-    
-        canvas {
-          border: 1px solid black;
+        .container {
+            display: flex;
+            height: 85%;
         }
-    
-        #spin {
-          margin-top: 20px;
+        .left-side {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
-      </style>
-    </head>
-    <body>
-      <div id="banner">
-        <h2>隨機臺北捷運站點</h2>
-        <h2>Random Taipei Metro Station</h2>
-      </div>
-      <div id="wheel-container">
-        <canvas id="wheel" width="500" height="500"></canvas>
-        <button id="spin">開始轉動</button>
-      </div>
+        .right-side {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 15px solid #1e90ff;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #station {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 20px;
+        }
+        .line-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <div class="banner-text">隨機捷運站咖啡廳</div>
+        <div class="banner-text">Random Taipei Metro Cafe</div>
+    </div>
+    <div class="container">
+        <div class="left-side">
+            <div class="line-buttons">
+                <button onclick="selectLine('blue')" style="background-color: #0070BD;">藍線</button>
+                <button onclick="selectLine('red')" style="background-color: #E3002C;">紅線</button>
+                <button onclick="selectLine('green')" style="background-color: #008659;">綠線</button>
+                <button onclick="selectLine('yellow')" style="background-color: #FED801;">黃線</button>
+                <button onclick="selectLine('orange')" style="background-color: #F7941D;">橘線</button>
+            </div>
+            <div id="wheel">
+                <div id="station">點擊按鈕選擇線路</div>
+            </div>
+            <button onclick="selectStation()" style="background-color: #1e90ff; margin-top: 20px;">隨機捷運站</button>
+        </div>
+        <div class="right-side">
+            <iframe id="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d231263.10937741218!2d121.40794277764069!3d25.085340415436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442ac6b61dbbd8b%3A0xbcd1baad5c06a482!2z6Ie65YyX5biC!5e0!3m2!1szh-TW!2stw!4v1687841396208!5m2!1szh-TW!2stw" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
 
-  <script>
-    const stations = ["台北車站", "象山", "東門", "中正紀念堂", "中山", "善導寺", "忠孝復興",
-        "忠孝新生", "南京復興"
-    ]; // 所有站點列表
-    const numSlices = stations.length; // 輪盤區塊數量
-    const wheelRadius = 200; // 輪盤半徑
-    const canvas = document.getElementById("wheel");
-    const ctx = canvas.getContext("2d");
-    const spinBtn = document.getElementById("spin");
-    let isSpinning = false;
-    let angleOffset = 0;
-    let lastUpdateTime = null;
+    <script>
+        const stations = {
+            blue: ['板橋', '新埔', '江子翠', '龍山寺', '西門'],
+            red: ['淡水', '關渡', '忠義', '竹圍', '紅樹林'],
+            green: ['松山', '南京三民', '台北小巨蛋', '南京復興', '松江南京'],
+            yellow: ['大安', '大安森林公園', '東門', '中正紀念堂', '古亭'],
+            orange: ['南勢角', '景安', '永安市場', '頂溪', '古亭']
+        };
+        let currentLine = '';
+        let flashInterval;
+        let selecting = false;
 
-    function drawWheel() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = 2;
+        function selectLine(line) {
+            currentLine = line;
+            document.getElementById('station').textContent = `已選擇${line}線`;
+            document.getElementById('wheel').style.borderColor = getLineColor(line);
+        }
 
-      // 繪製輪盤本身
-      ctx.beginPath();
-      ctx.arc(canvas.width / 2, canvas.height / 2, wheelRadius, 0, 2 * Math.PI);
-      ctx.stroke();
+        function getLineColor(line) {
+            const colors = {blue: '#0070BD', red: '#E3002C', green: '#008659', yellow: '#FED801', orange: '#F7941D'};
+            return colors[line];
+        }
 
-      // 繪製輪盤區塊和站點名稱
-      const sliceAngle = 2 * Math.PI / numSlices;
-      for (let i = 0; i < numSlices; i++) {
-        const startAngle = i * sliceAngle;
-        ctx.beginPath();
-        ctx.moveTo(canvas.width / 2, canvas.height / 2);
-        ctx.arc(
-          canvas.width / 2,
-          canvas.height / 2,
-          wheelRadius,
-          startAngle,
-          startAngle + sliceAngle,
-          false
-        );
-        ctx.lineTo(canvas.width / 2, canvas.height / 2);
-        ctx.closePath();
-        ctx.stroke();
+        function selectStation() {
+            if (selecting || !currentLine) return;
+            selecting = true;
 
-        const textAngle = startAngle + sliceAngle / 2 - Math.PI / 2;
-        const textX = canvas.width / 2 + Math.cos(textAngle) * wheelRadius * 0.6;
-        const textY = canvas.height / 2 + Math.sin(textAngle) * wheelRadius * 0.6;
-        ctx.fillText(stations[i], textX, textY);
-      }
-    }
+            const station = document.getElementById('station');
+            const lineStations = stations[currentLine];
+            
+            let i = 0;
+            flashInterval = setInterval(() => {
+                station.textContent = lineStations[i];
+                i = (i + 1) % lineStations.length;
+            }, 100);
+            
+            const randomStation = lineStations[Math.floor(Math.random() * lineStations.length)];
+            
+            setTimeout(() => {
+                clearInterval(flashInterval);
+                station.textContent = randomStation;
+                updateMap(randomStation);
+                selecting = false;
+            }, 3000);
+        }
 
-    function spin() {
-      if (!isSpinning) {
-        isSpinning = true;
-        angleOffset = Math.random() * 10 + 10; // 隨機初始角度偏移
-        lastUpdateTime = null;
-        requestAnimationFrame(spinUpdate);
-      }
-    }
-
-    function spinUpdate(time) {
-      if (!lastUpdateTime) {
-        lastUpdateTime = time;
-      }
-      const deltaTime = time - lastUpdateTime;
-      lastUpdateTime = time;
-
-      angleOffset -= deltaTime * 0.001; // 角度偏移隨時間遞減
-
-      drawWheel();
-
-      if (angleOffset > 0) {
-        requestAnimationFrame(spinUpdate);
-      } else {
-        isSpinning = false;
-        const selectedSlice = Math.floor((2 * Math.PI - angleOffset) / (2 * Math.PI / numSlices)) % numSlices;
-        alert(`隨機選取的站點是: ${stations[selectedSlice]}`);
-      }
-    }
-
-    drawWheel();
-    spinBtn.addEventListener("click", spin);
-  </script>
+        function updateMap(stationName) {
+            const mapUrl = `https://www.google.com/maps/embed/v1/search?key=${process.env.GOOGLE_MAPS_API_KEY}&q=咖啡廳+near+${stationName}捷運站&zoom=15`;
+            document.getElementById('map').src = mapUrl;
+        }
+    </script>
 </body>
 </html>
