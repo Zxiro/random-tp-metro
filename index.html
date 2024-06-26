@@ -117,11 +117,18 @@
 
     <script>
         const stations = {
-            blue: ['板橋', '新埔', '江子翠', '龍山寺', '西門'],
-            red: ['淡水', '關渡', '忠義', '竹圍', '紅樹林'],
-            green: ['松山', '南京三民', '台北小巨蛋', '南京復興', '松江南京'],
-            yellow: ['大安', '大安森林公園', '東門', '中正紀念堂', '古亭'],
-            orange: ['南勢角', '景安', '永安市場', '頂溪', '古亭']
+            Blue: ['頂埔', '永寧', '土城', '海山',
+                    '亞東醫院', '板橋', '新埔', 
+                    '江子翠', '龍山寺', '西門',
+                    '台北車站', '善導寺', '忠孝新生',
+                    '忠孝復興', '忠孝敦化', '國父紀念館',
+                    '市政府', '永春', '後山埤', '昆陽',
+                    '南港', '南港展覽館'
+                ],
+            Red: ['淡水', '關渡', '忠義', '竹圍', '紅樹林'],
+            Green: ['松山', '南京三民', '台北小巨蛋', '南京復興', '松江南京'],
+            Yellow: ['大安', '大安森林公園', '東門', '中正紀念堂', '古亭'],
+            Orange: ['南勢角', '景安', '永安市場', '頂溪', '古亭']
         };
         let currentLine = '';
         let flashInterval;
@@ -129,7 +136,7 @@
 
         function selectLine(line) {
             currentLine = line;
-            document.getElementById('station').textContent = `已選擇${line}線`;
+            document.getElementById('station').textContent = `${line} Line`;
             document.getElementById('wheel').style.borderColor = getLineColor(line);
         }
 
@@ -162,7 +169,7 @@
         }
 
         function updateMap(stationName) {
-            const mapUrl = `https://www.google.com/maps/embed/v1/search?key=<%= process.env.GOOGLE_MAPS_API_KEY %>&q=咖啡廳+near+${stationName}捷運站&zoom=15`;
+            const mapUrl = `https://www.google.com/maps/embed/v1/search?key=GOOGLE_MAPS_API_KEY_PLACEHOLDER&q=咖啡廳+near+${stationName}捷運站&zoom=15`;
             document.getElementById('map').src = mapUrl;
         }
     </script>
