@@ -169,7 +169,7 @@
         }
 
         function updateMap(stationName) {
-            const mapUrl = `https://www.google.com/maps/embed/v1/search?key=GOOGLE_MAPS_API_KEY_PLACEHOLDER&q=咖啡廳+near+${stationName}捷運站&zoom=15`;
+            const mapUrl = `https://www.google.com/maps/embed/v1/search?key=process.env.GOOGLE_MAPS_API_KEY&q=咖啡廳+near+${stationName}捷運站&zoom=15`;
             document.getElementById('map').src = mapUrl;
         }
     </script>
