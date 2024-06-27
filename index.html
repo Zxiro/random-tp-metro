@@ -129,7 +129,66 @@
     </div>
 
     <script>
-        // 保持原有的 JavaScript 代碼不變
+        const stations = {
+            Blue: ['頂埔', '永寧', '土城', '海山',
+                    '亞東醫院', '板橋', '新埔', 
+                    '江子翠', '龍山寺', '西門',
+                    '台北車站', '善導寺', '忠孝新生',
+                    '忠孝復興', '忠孝敦化', '國父紀念館',
+                    '市政府', '永春', '後山埤', '昆陽',
+                    '南港', '南港展覽館'
+                ],
+            Red: ['淡水', '關渡', '忠義', '竹圍', '紅樹林'],
+            Green: ['松山', '南京三民', '台北小巨蛋', '南京復興', '松江南京'],
+            Yellow: ['大安', '大安森林公園', '東門', '中正紀念堂', '古亭'],
+            Orange: ['南勢角', '景安', '永安市場', '頂溪', '古亭']
+        };
+        let currentLine = '';
+        let flashInterval;
+        let selecting = false;
+
+        function selectLine(line) {
+            currentLine = line;
+            document.getElementById('station').textContent = `${line} Line`;
+            document.getElementById('wheel').style.borderColor = getLineColor(line);
+        }
+
+        function getLineColor(line) {
+            const colors = {Blue: '#0070BD', Red: '#E3002C', Green: '#008659', Yellow: '#FED801', Orange: '#F7941D'};
+            return colors[line];
+        }
+
+        function selectStation() {
+            if (selecting || !currentLine) return;
+            selecting = true;
+
+            const station = document.getElementById('station');
+            const lineStations = stations[currentLine];
+            
+            let i = 0;
+            flashInterval = setInterval(() => {
+                station.textContent = lineStations[i];
+                i = (i + 1) % lineStations.length;
+            }, 100);
+            
+            const randomStation = lineStations[Math.floor(Math.random() * lineStations.length)];
+            
+            setTimeout(() => {
+                clearInterval(flashInterval);
+                station.textContent = randomStation;
+                updateMap(randomStation);
+                selecting = false;
+            }, 3000);
+        }
+
+        function updateMap(stationName) {
+            fetch('/api/getMap?station=' + encodeURIComponent(stationName))
+                .then(response => response.text())
+                .then(mapUrl => {
+                    document.getElementById('map').src = mapUrl;
+                })
+                .catch(error => console.error('Error:', error));
+        }
     </script>
 </body>
 </html>
