@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>隨機捷運站咖啡廳</title>
+    <title>北捷命運咖啡廳</title>
     <style>
         body, html {
             font-family: Arial, sans-serif;
@@ -19,8 +19,8 @@
             align-items: center;
             padding: 10px 20px;
             box-sizing: border-box;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
         }
         .banner-text {
             font-size: 18px;
@@ -64,6 +64,32 @@
         button:hover {
             opacity: 0.8;
         }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .random-station-button {
+            background-color: #1e90ff;
+            font-size: 18px;
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .random-station-button:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 767px) {
+            .random-station-button {
+                font-size: 16px;
+                padding: 8px 16px;
+            }
+        }
         #map {
             width: 100%;
             height: 300px;
@@ -106,7 +132,7 @@
 </head>
 <body>
     <div class="banner">
-        <div class="banner-text">隨機捷運站咖啡廳</div>
+        <div class="banner-text">北捷命運咖啡廳</div>
         <div class="banner-text">Random Taipei Metro Cafe</div>
     </div>
     <div class="container">
@@ -121,7 +147,9 @@
             <div id="wheel">
                 <div id="station">點擊按鈕選擇線路</div>
             </div>
-            <button onclick="selectStation()" style="background-color: #1e90ff; margin-top: 20px;">隨機捷運站</button>
+            <div class="button-container">
+                <button onclick="selectStation()" class="random-station-button">隨機捷運站</button>
+            </div>
         </div>
         <div class="right-side">
             <iframe id="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d231263.10937741218!2d121.40794277764069!3d25.085340415436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442ac6b61dbbd8b%3A0xbcd1baad5c06a482!2z6Ie65YyX5biC!5e0!3m2!1szh-TW!2stw!4v1687841396208!5m2!1szh-TW!2stw" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -138,7 +166,13 @@
                     '市政府', '永春', '後山埤', '昆陽',
                     '南港', '南港展覽館'
                 ],
-            Red: ['淡水', '關渡', '忠義', '竹圍', '紅樹林'],
+            Red: ['淡水','紅樹林', '竹圍', '關渡', '忠義',
+                    '復興崗', '北投', '奇岩', '唭哩岸', 
+                    '石牌', '明德', '芝山', '士林', '劍潭',
+                    '圓山', '民權西路', '雙連', '中山', '台北車站',
+                    '台大醫院', '中正紀念堂', '東門', '大安森林公園',
+                    '大安', '台北101/世貿', '信義安和', '象山'
+                ],
             Green: ['松山', '南京三民', '台北小巨蛋', '南京復興', '松江南京'],
             Yellow: ['大安', '大安森林公園', '東門', '中正紀念堂', '古亭'],
             Orange: ['南勢角', '景安', '永安市場', '頂溪', '古亭']
