@@ -169,7 +169,7 @@
         }
 
         function updateMap(stationName) {
-            fetch('./getMap?station=' + encodeURIComponent(stationName))
+            fetch('/api/getMap?station=' + encodeURIComponent(stationName))
                 .then(response => response.text())
                 .then(mapUrl => {
                     document.getElementById('map').src = mapUrl;
